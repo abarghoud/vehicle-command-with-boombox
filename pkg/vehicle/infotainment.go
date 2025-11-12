@@ -236,3 +236,23 @@ func (v *Vehicle) SetVehicleName(ctx context.Context, name string) error {
 			},
 		})
 }
+
+// RemoteBoombox plays a sound through the vehicle's external speaker.
+// The action parameter specifies which sound to play:
+//   - 0: Random fart or Boombox sound
+//	 - 2000: Locate Ping
+// Note: This feature has regional restrictions due to Pedestrian Warning System regulations
+// and may not be available in all jurisdictions.
+// Additional note: Currently only action 0 is known to work. Ping sound (2000) will error out: car could not execute command: RemoteBoombox locate ping only allowed in robotaxi mode under 10 mph
+func (v *Vehicle) RemoteBoombox(ctx context.Context, action uint32) error {
+	return v.executeCarServerAction(ctx,
+		&carserver.Action_VehicleAction{
+			VehicleAction: &carserver.VehicleAction{
+				VehicleActionMsg: &carserver.VehicleAction_VehicleControlRemoteBoomboxAction{
+					VehicleControlRemoteBoomboxAction: &carserver.VehicleControlRemoteBoomboxAction{
+						Action: action,
+					},
+				},
+			},
+		})
+}
