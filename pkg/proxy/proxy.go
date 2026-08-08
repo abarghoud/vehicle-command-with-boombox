@@ -392,7 +392,14 @@ func (p *Proxy) handleFleetTelemetryConfig(acct *account.Account, w http.Respons
 		writeJSONError(w, http.StatusInternalServerError, fmt.Errorf("error creating proxied URL: %s", err))
 		return
 	}
-	log.Debug("Posting data to %s: %s", req.URL.String(), bodyJSON)
+	redactedBody, err := json.Marshal(map[string]interface{}{
+		"vins":  params.VINs,
+		"token": "<redacted>",
+	})
+	if err != nil {
+		redactedBody = []byte("{\"vins\": [], \"token\": \"<redacted>\"}")
+	}
+	log.Debug("Posting data to %s: %s", req.URL.String(), redactedBody)
 	p.forwardRequest(acct, w, req)
 }
 
